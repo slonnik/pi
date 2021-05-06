@@ -1,0 +1,10 @@
+[Unit]
+Description=bme influx
+After=multi-user.target
+
+[Service]
+ExecStart=/home/pi/Projects/bme/pthn/bin/python /home/pi/Projects/bme/bme_influx.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target

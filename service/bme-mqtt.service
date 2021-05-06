@@ -1,0 +1,10 @@
+[Unit]
+Description=bme mqtt
+After=multi-user.target
+
+[Service]
+ExecStart=/home/pi/Projects/bme/pthn/bin/python /home/pi/Projects/bme/bme_mqtt.py
+User=pi
+
+[Install]
+WantedBy=multi-user.target

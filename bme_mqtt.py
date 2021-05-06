@@ -4,6 +4,7 @@ import time
 import paho.mqtt.client as mqtt
 import json
 import sys
+import requests
 from influxdb import InfluxDBClient
 from datetime import datetime
 
@@ -28,7 +29,7 @@ def on_message(client, userdata, msg):
                 		"icon": "thermometer",
                 		"status": str(err)
         		}
-			client.publish("/IoTmanager/dev-01/config", json.dumps(data))
+			client.publish("/IoTmanager/home/config", json.dumps(data))
 			
 	
 def job():
@@ -41,14 +42,22 @@ def job():
                 "icon": "thermometer",
 		"status": temperature
         }
-	client.publish("/IoTmanager/dev-01/config", json.dumps(data))
+	client.publish("/IoTmanager/home/config", json.dumps(data))
 	data ={
                 "descr": "humidity",
                 "widget": "fillgauge",
                 "topic": "/IoTmanager/demo/humidity",
                 "status": "{:.2f}".format(humidity)
         }
-	client.publish("/IoTmanager/dev-01/config", json.dumps(data))
+	client.publish("/IoTmanager/home/config", json.dumps(data))
+	data ={
+                "descr": "ip",
+                "widget": "anydata",
+                "topic": "/IoTmanager/demo/ip",
+                "icon": "globe",
+                "status": requests.get('https://checkip.amazonaws.com').text.strip()
+        }
+	client.publish("/IoTmanager/home/config", json.dumps(data))
 	result = influx_client.query('select temperature from bme280 order by desc limit 12;')
 	data ={
                 "descr": "sensor3",
@@ -65,7 +74,7 @@ def job():
 		date_value = datetime.strptime(item['time'], "%Y-%m-%dT%H:%M:%S.%fZ" )
 		if date_value >= now_start:
 			data["status"].append({"x": date_value.strftime("%Y-%m-%d %H:%M"), "y1": item['temperature']})
-	client.publish("/IoTmanager/dev-01/config", json.dumps(data))
+	client.publish("/IoTmanager/home/config", json.dumps(data))
 
 def main():
 	global client
