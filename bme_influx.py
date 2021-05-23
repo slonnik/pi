@@ -4,6 +4,7 @@ import schedule
 import time
 from influxdb import InfluxDBClient
 from datetime import datetime
+import ptvsd
 
 def job():
 	
@@ -32,5 +33,6 @@ def main():
 		time.sleep(1)
 
 if __name__ == '__main__':
+	debugger_helper.attach_vscode(lambda host, port: ptvsd.enable_attach(address=(host, port), redirect_output=True))
 	main()
 
