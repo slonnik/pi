@@ -30,8 +30,15 @@ def on_message(client, userdata, msg):
                 		"status": str(err)
         		}
 			client.publish("/IoTmanager/home/config", json.dumps(data))
-			
-	
+	elif msg.payload.decode('UTF-8') == "EPD":
+		temperature = ""
+		try:
+                	temperature,pressure,humidity = bme280.readBME280All()
+		except OSError as err:
+			temperature = "error"
+		print("EPD: " + str(temperature))
+		client.publish("/IoTmanager/epd/temperature", str(temperature))
+		
 def job():
 	temperature,pressure,humidity = bme280.readBME280All()
 	data ={
